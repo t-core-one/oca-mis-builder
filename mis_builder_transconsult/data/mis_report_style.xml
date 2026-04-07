@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 Transconsult
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <!-- Стил за заглавия на раздели (приходи / разходи) -->
+    <record id="style_section_header" model="mis.report.style">
+        <field name="name">TC: Заглавие раздел</field>
+        <field name="font_weight_inherit" eval="False" />
+        <field name="font_weight">bold</field>
+        <field name="background_color_inherit" eval="False" />
+        <field name="background_color">#1F4E79</field>
+        <field name="color_inherit" eval="False" />
+        <field name="color">#FFFFFF</field>
+        <field name="indent_level_inherit" eval="False" />
+        <field name="indent_level">0</field>
+    </record>
+
+    <!-- Стил за ред с детайли по сметка -->
+    <record id="style_account_detail" model="mis.report.style">
+        <field name="name">TC: Детайл сметка</field>
+        <field name="indent_level_inherit" eval="False" />
+        <field name="indent_level">1</field>
+        <field name="font_style_inherit" eval="False" />
+        <field name="font_style">italic</field>
+    </record>
+
+    <!-- Стил за подтотали (общо приходи / общо разходи) -->
+    <record id="style_subtotal" model="mis.report.style">
+        <field name="name">TC: Подтотал</field>
+        <field name="font_weight_inherit" eval="False" />
+        <field name="font_weight">bold</field>
+        <field name="background_color_inherit" eval="False" />
+        <field name="background_color">#D6E4F7</field>
+        <field name="indent_level_inherit" eval="False" />
+        <field name="indent_level">0</field>
+    </record>
+
+    <!-- Стил за финален резултат -->
+    <record id="style_result" model="mis.report.style">
+        <field name="name">TC: Финален резултат</field>
+        <field name="font_weight_inherit" eval="False" />
+        <field name="font_weight">bold</field>
+        <field name="background_color_inherit" eval="False" />
+        <field name="background_color">#2E7D32</field>
+        <field name="color_inherit" eval="False" />
+        <field name="color">#FFFFFF</field>
+        <field name="indent_level_inherit" eval="False" />
+        <field name="indent_level">0</field>
+    </record>
+
+    <!-- Стил за основния отчет (суфикс BGN, 2 дес. знака) -->
+    <record id="style_main" model="mis.report.style">
+        <field name="name">TC: Основен (BGN)</field>
+        <field name="prefix_inherit" eval="False" />
+        <field name="prefix"></field>
+        <field name="suffix_inherit" eval="False" />
+        <field name="suffix"> лв.</field>
+        <field name="dp_inherit" eval="False" />
+        <field name="dp">2</field>
+    </record>
+</odoo>

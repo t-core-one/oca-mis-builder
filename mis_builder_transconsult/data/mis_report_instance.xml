@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 Transconsult
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<!--
+    Инстанция на справката: Планирано vs Реално (от началото на годината)
+
+    КОЛОНИ:
+    ────────────────────────────────────────────────────────────────────
+    1. Планирано (ОН)   – Бюджет YTD от mis.budget.by.account
+                          (pro-rata от 1 януари до края на текущия месец)
+    2. Реално (ОН)      – Счетоводни операции YTD
+                          (от 1 януари до края на текущия месец)
+    3. Отклонение (ОН)  – Планирано – Реално  (sumcol)
+    4. Годишен бюджет   – Цялата година от бюджета
+    ────────────────────────────────────────────────────────────────────
+
+    РЕЖИМ НА ПЕРИОДА:
+    • mode = "relative"  → периодът се изчислява спрямо базовата дата на инстанцията
+    • type = "m"         → тип „месец"
+    • offset = 0         → текущият месец
+    • is_ytd = True      → принудително начало от 1 януари (Year-to-date)
+
+    За колона „Годишен бюджет":
+    • type = "y", offset = 0  → текущата година (1 ян. – 31 дек.)
+-->
+<odoo>
+    <record id="mis_report_instance_tc_budget" model="mis.report.instance">
+        <field name="name">Transconsult – Планирано vs Реално (ОН)</field>
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="comparison_mode" eval="True" />
+    </record>
+
+    <!-- ── КОЛОНА 1: Планирано (от началото на годината, YTD) ── -->
+    <record id="period_budget_ytd" model="mis.report.instance.period">
+        <field name="name">Планирано (ОН)</field>
+        <field name="report_instance_id" ref="mis_report_instance_tc_budget" />
+        <field name="source">mis_budget_by_account</field>
+        <field
+            name="source_mis_budget_by_account_id"
+            ref="mis_budget_transconsult_current_year"
+        />
+        <field name="mode">relative</field>
+        <field name="type">m</field>
+        <field name="offset">0</field>
+        <field name="duration">1</field>
+        <field name="is_ytd" eval="True" />
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- ── КОЛОНА 2: Реално (от началото на годината, YTD) ── -->
+    <record id="period_actual_ytd" model="mis.report.instance.period">
+        <field name="name">Реално (ОН)</field>
+        <field name="report_instance_id" ref="mis_report_instance_tc_budget" />
+        <field name="source">actuals</field>
+        <field name="mode">relative</field>
+        <field name="type">m</field>
+        <field name="offset">0</field>
+        <field name="duration">1</field>
+        <field name="is_ytd" eval="True" />
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- ── КОЛОНА 3: Отклонение YTD = Планирано – Реално (sumcol) ── -->
+    <record id="period_variance_ytd" model="mis.report.instance.period">
+        <field name="name">Отклонение (ОН)</field>
+        <field name="report_instance_id" ref="mis_report_instance_tc_budget" />
+        <field name="source">sumcol</field>
+        <field name="mode">none</field>
+        <field name="sequence">30</field>
+    </record>
+    <!-- Планирано + -->
+    <record id="period_variance_ytd_s1" model="mis.report.instance.period.sum">
+        <field name="period_id" ref="period_variance_ytd" />
+        <field name="period_to_sum_id" ref="period_budget_ytd" />
+        <field name="sign">+</field>
+    </record>
+    <!-- Реално – -->
+    <record id="period_variance_ytd_s2" model="mis.report.instance.period.sum">
+        <field name="period_id" ref="period_variance_ytd" />
+        <field name="period_to_sum_id" ref="period_actual_ytd" />
+        <field name="sign">-</field>
+    </record>
+
+    <!-- ── КОЛОНА 4: Годишен бюджет (цялата година) ── -->
+    <record id="period_budget_full_year" model="mis.report.instance.period">
+        <field name="name">Годишен бюджет</field>
+        <field name="report_instance_id" ref="mis_report_instance_tc_budget" />
+        <field name="source">mis_budget_by_account</field>
+        <field
+            name="source_mis_budget_by_account_id"
+            ref="mis_budget_transconsult_current_year"
+        />
+        <field name="mode">relative</field>
+        <field name="type">y</field>
+        <field name="offset">0</field>
+        <field name="duration">1</field>
+        <field name="sequence">40</field>
+    </record>
+</odoo>

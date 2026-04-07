@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 Transconsult
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<!--
+    Шаблон за справка: Приходи и разходи – Планирано vs Реално
+    Използва Единния сметкоплан на България (% wildcard за групи сметки).
+
+    Приходи (7xx) – кредитни сметки, затова се отрицателен баланс (-balp)
+    Разходи (6xx) – дебитни сметки, балансът е положителен (balp)
+
+    Ключове на KPI-та:
+      rev_oper   – Оперативни приходи  (70%)
+      rev_fin    – Финансови приходи   (72%)
+      rev_total  – ОБЩО ПРИХОДИ        (изчислен)
+      exp_601    – Материали           (601%)
+      exp_602    – Външни услуги       (602%)
+      exp_603    – Амортизации         (603%)
+      exp_604    – Заплати             (604%)
+      exp_605    – Осигуровки          (605%)
+      exp_other  – Останали оп. разх.  (606%,607%,608%,609%)
+      exp_fin    – Финансови разходи   (62%)
+      exp_total  – ОБЩО РАЗХОДИ        (изчислен)
+      result     – ФИНАНСОВ РЕЗУЛТАТ   (изчислен)
+-->
+<odoo>
+    <record id="mis_report_budget_vs_actual" model="mis.report">
+        <field name="name">Transconsult – Планирано vs Реално</field>
+        <field name="style_id" ref="style_main" />
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════
+         РАЗДЕЛ: ПРИХОДИ
+    ══════════════════════════════════════════════════════ -->
+
+    <!-- Заглавен ред "ПРИХОДИ" (separator, без стойност) -->
+    <record id="kpi_rev_header" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">rev_header</field>
+        <field name="description">ПРИХОДИ</field>
+        <field name="budgetable" eval="False" />
+        <field name="style_id" ref="style_section_header" />
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Оперативни приходи (сметки 70x) -->
+    <record id="kpi_rev_oper" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">rev_oper</field>
+        <field name="description">Оперативни приходи</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_account_detail" />
+        <field name="sequence">20</field>
+    </record>
+    <record id="kpi_rev_oper_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_rev_oper" />
+        <field name="name">-balp[70%]</field>
+    </record>
+
+    <!-- Финансови приходи (сметки 72x) -->
+    <record id="kpi_rev_fin" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">rev_fin</field>
+        <field name="description">Финансови приходи</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_account_detail" />
+        <field name="sequence">30</field>
+    </record>
+    <record id="kpi_rev_fin_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_rev_fin" />
+        <field name="name">-balp[72%]</field>
+    </record>
+
+    <!-- ОБЩО ПРИХОДИ (изчислен) -->
+    <record id="kpi_rev_total" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">rev_total</field>
+        <field name="description">ОБЩО ПРИХОДИ</field>
+        <field name="expression">rev_oper + rev_fin</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="False" />
+        <field name="style_id" ref="style_subtotal" />
+        <field name="sequence">40</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════
+         РАЗДЕЛ: РАЗХОДИ
+    ══════════════════════════════════════════════════════ -->
+
+    <!-- Заглавен ред "РАЗХОДИ" -->
+    <record id="kpi_exp_header" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">exp_header</field>
+        <field name="description">РАЗХОДИ</field>
+        <field name="budgetable" eval="False" />
+        <field name="style_id" ref="style_section_header" />
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- 601 – Разходи за материали -->
+    <record id="kpi_exp_601" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">exp_601</field>
+        <field name="description">Разходи за материали</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_account_detail" />
+        <field name="sequence">60</field>
+    </record>
+    <record id="kpi_exp_601_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_exp_601" />
+        <field name="name">balp[601%]</field>
+    </record>
+
+    <!-- 602 – Разходи за външни услуги -->
+    <record id="kpi_exp_602" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">exp_602</field>
+        <field name="description">Разходи за външни услуги</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_account_detail" />
+        <field name="sequence">70</field>
+    </record>
+    <record id="kpi_exp_602_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_exp_602" />
+        <field name="name">balp[602%]</field>
+    </record>
+
+    <!-- 603 – Разходи за амортизации -->
+    <record id="kpi_exp_603" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">exp_603</field>
+        <field name="description">Амортизации</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_account_detail" />
+        <field name="sequence">80</field>
+    </record>
+    <record id="kpi_exp_603_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_exp_603" />
+        <field name="name">balp[603%]</field>
+    </record>
+
+    <!-- 604 – Разходи за заплати -->
+    <record id="kpi_exp_604" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">exp_604</field>
+        <field name="description">Разходи за заплати</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_account_detail" />
+        <field name="sequence">90</field>
+    </record>
+    <record id="kpi_exp_604_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_exp_604" />
+        <field name="name">balp[604%]</field>
+    </record>
+
+    <!-- 605 – Разходи за социални осигуровки -->
+    <record id="kpi_exp_605" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">exp_605</field>
+        <field name="description">Социални осигуровки</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_account_detail" />
+        <field name="sequence">100</field>
+    </record>
+    <record id="kpi_exp_605_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_exp_605" />
+        <field name="name">balp[605%]</field>
+    </record>
+
+    <!-- 606-609 – Останали оперативни разходи -->
+    <record id="kpi_exp_other" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">exp_other</field>
+        <field name="description">Останали оперативни разходи</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_account_detail" />
+        <field name="sequence">110</field>
+    </record>
+    <record id="kpi_exp_other_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_exp_other" />
+        <field name="name">balp[606%,607%,608%,609%]</field>
+    </record>
+
+    <!-- 62x – Финансови разходи -->
+    <record id="kpi_exp_fin" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">exp_fin</field>
+        <field name="description">Финансови разходи</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="True" />
+        <field name="auto_expand_accounts_style_id" ref="style_account_detail" />
+        <field name="sequence">120</field>
+    </record>
+    <record id="kpi_exp_fin_expr" model="mis.report.kpi.expression">
+        <field name="kpi_id" ref="kpi_exp_fin" />
+        <field name="name">balp[62%]</field>
+    </record>
+
+    <!-- ОБЩО РАЗХОДИ (изчислен) -->
+    <record id="kpi_exp_total" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">exp_total</field>
+        <field name="description">ОБЩО РАЗХОДИ</field>
+        <field
+            name="expression"
+        >exp_601 + exp_602 + exp_603 + exp_604 + exp_605 + exp_other + exp_fin</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="False" />
+        <field name="style_id" ref="style_subtotal" />
+        <field name="sequence">130</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════
+         ФИНАНСОВ РЕЗУЛТАТ
+    ══════════════════════════════════════════════════════ -->
+
+    <record id="kpi_result" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_budget_vs_actual" />
+        <field name="name">result</field>
+        <field name="description">ФИНАНСОВ РЕЗУЛТАТ</field>
+        <field name="expression">rev_total - exp_total</field>
+        <field name="budgetable" eval="False" />
+        <field name="auto_expand_accounts" eval="False" />
+        <field name="style_id" ref="style_result" />
+        <field name="sequence">140</field>
+    </record>
+</odoo>
